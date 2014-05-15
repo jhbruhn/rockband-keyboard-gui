@@ -77,7 +77,7 @@ module.exports = function(grunt) {
 
     if(fs.existsSync(targetFile)) {
       grunt.log.writeln('skip download: file exists: ' + targetFile);
-      return;
+      done();
     }
 
     grunt.log.writeln('Starting download.');

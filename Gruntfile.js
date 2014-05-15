@@ -5,7 +5,8 @@ var wrench        = require('wrench'),
     ProgressBar   = require('progress'),
     DecompressZip = require('decompress-zip'),
     tar           = require('tar-fs'),
-    zlib          = require('zlib');
+    zlib          = require('zlib'),
+    archiver      = require('archiver');
 
 var nodeWebkitVersion = "0.9.2";
 
@@ -49,6 +50,31 @@ var downloadFile = function(targetFile, remoteUrl, done) {
   });
 
   req.end();
+}
+
+var zipFolder = function(folder, cwd, targetFile, cb) {
+  var output = fs.createWriteStream(targetFile);
+  var archive = archiver('zip');
+
+  output.on('close', function() {
+    cb();
+  });
+  
+  archive.on('error', function(err) {
+    cb(err);
+  });
+
+  archive.pipe(output);
+  archive.bulk([
+      {
+        src: "**/*",
+        cwd: __dirname + "/" + folder,
+        expand: true
+      }
+    ]);
+
+  archive.finalize();
+
 }
 
 
@@ -127,7 +153,6 @@ module.exports = function(grunt) {
               grunt.file.copy(file, targetPath + "/node-webkit.app/Contents/Resources/app.nw/" + file);
           });
           wrench.chmodSyncRecursive(targetPath, 0755);
-          done();
         } else if(os == "win") {
           grunt.file.expand(distFiles).forEach(function(file) {
             if(grunt.file.isDir(file))
@@ -135,8 +160,9 @@ module.exports = function(grunt) {
             else
               grunt.file.copy(file, targetPath + "/" + file);
           });
-          done();
         }
+        zipFolder(targetPath, "dist/", "dist/"+os+arch+".zip", done);
+
       });
 
       unzipper.extract({
@@ -161,7 +187,7 @@ module.exports = function(grunt) {
               grunt.file.copy(file, targetPath + "/" + file);
           });
           wrench.chmodSyncRecursive(targetPath, 0755);
-          done();
+          zipFolder(targetPath, "dist/", "dist/"+os+arch+".zip", done);
         });
 
     }

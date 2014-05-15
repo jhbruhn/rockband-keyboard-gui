@@ -2,9 +2,19 @@ var wrench      = require('wrench'),
     http        = require('http'),
     url         = require('url'),
     fs          = require('fs'),
-    ProgressBar = require('progress');
+    ProgressBar = require('progress'),
+    DecompressZip = require('decompress-zip');
 
 var nodeWebkitVersion = "0.9.2";
+
+var nwFormats = {
+  "osx": "zip",
+  "win": "zip",
+  "linux": "tar.gz"
+}
+
+var distFiles = ["build/**", './node_modules/**', '!./node_modules/grunt*/**',
+             '!./node_modules/nodewebkit*/**', "package.json", 'index.html'];
 
 var downloadFile = function(targetFile, remoteUrl, done) {
   var parsed = url.parse(remoteUrl);
@@ -67,8 +77,9 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('download-node-webkit', function(os, arch, format) {
+  grunt.registerTask('download-node-webkit', function(os, arch) {
     var done = this.async();
+    var format = nwFormats[os];
     var targetFolder = "dist/cache";
     var targetFile = getLocalNodeWebkitDownloadPath(os, arch, format);
     var remoteUrl = getNodeWebkitDownloadURL(os, arch, nodeWebkitVersion, format);
@@ -84,10 +95,44 @@ module.exports = function(grunt) {
     downloadFile(targetFile, remoteUrl, done)
   });
 
-  grunt.registerTask('download-node-webkit-mac', ['download-node-webkit:osx:ia32:zip']);
-  grunt.registerTask('download-node-webkit-win', ['download-node-webkit:win:ia32:zip']);
-  grunt.registerTask('download-node-webkit-linux32', ['download-node-webkit:linux:ia32:tar.gz']);
-  grunt.registerTask('download-node-webkit-linux64', ['download-node-webkit:linux:x64:tar.gz']);
+  grunt.registerTask('download-node-webkit-mac', ['download-node-webkit:osx:ia32']);
+  grunt.registerTask('download-node-webkit-win', ['download-node-webkit:win:ia32']);
+  grunt.registerTask('download-node-webkit-linux32', ['download-node-webkit:linux:ia32']);
+  grunt.registerTask('download-node-webkit-linux64', ['download-node-webkit:linux:x64']);
+
+
+  grunt.registerTask('bundle-node-webkit-app', function(os, arch) {
+    var done = this.async();
+
+    var format = nwFormats[os];
+
+    if(format == "zip") {
+      var filename = getLocalNodeWebkitDownloadPath(os, arch, format);
+      var unzipper = new DecompressZip(filename);
+      var targetPath = 'dist/' + os + arch;
+
+      unzipper.on('error', function(err) {
+        done(err);
+      });
+
+      unzipper.on('extract', function(log) {
+        if(os == "osx") {
+          grunt.file.expand(distFiles).forEach(function(file) {
+            grunt.file.copy(file, targetPath + "/node-webkit.app/Contents/Resources/app.nw/" + file);
+          });
+          wrench.chmodSyncRecursive(targetPath, 0755);
+        } else if(os == "win") {
+          grunt.file.expand(distFiles).forEach(function(file) {
+            grunt.file.copy(file, targetPath + "/" + file);
+          });
+        }
+      });
+
+      unzipper.extract({
+        path: targetPath
+      });
+    }
+  })
 
 
   require('load-grunt-tasks')(grunt);

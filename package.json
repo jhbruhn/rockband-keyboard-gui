@@ -2,7 +2,7 @@
   "name": "rockband-keyboard-gui",
   "version": "0.0.0",
   "description": "A gui for using the Rockband-Keyboard as a wireless MIDI-Device.",
-  "main": "index.js",
+  "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

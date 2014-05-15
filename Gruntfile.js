@@ -67,7 +67,7 @@ var zipFolder = function(folder, cwd, targetFile, cb) {
   archive.pipe(output);
   archive.bulk([
       {
-        src: "**/*",
+        src: ["**/*", "!nwsnapshot*", "!credits.html"],
         cwd: __dirname + "/" + folder,
         expand: true
       }
@@ -151,7 +151,10 @@ module.exports = function(grunt) {
               grunt.file.mkdir(file);
             else
               grunt.file.copy(file, targetPath + "/node-webkit.app/Contents/Resources/app.nw/" + file);
+
           });
+          fs.renameSync(targetPath + "/node-webkit.app/", targetPath + "/Rockband Keyboard.app");
+
           wrench.chmodSyncRecursive(targetPath, 0755);
         } else if(os == "win") {
           grunt.file.expand(distFiles).forEach(function(file) {

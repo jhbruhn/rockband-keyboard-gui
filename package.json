@@ -26,6 +26,12 @@
     "tar-fs": "^0.3.2",
     "time-grunt": "^0.3.1",
     "wrench": "^1.5.8",
-    "archiver": "^0.10.0-alpha"
-  }
+    "archiver": "^0.10.0-alpha",
+    "grunt-contrib-watch": "^0.6.1"
+  },
+  "dependencies": {
+    "semver": "^2.3.0",
+    "request": "^2.34.0"
+  },
+  "remoteUpdateUrl": "http://localhost:8080"
 }

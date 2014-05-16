@@ -6,7 +6,8 @@ var wrench        = require('wrench'),
     DecompressZip = require('decompress-zip'),
     tar           = require('tar-fs'),
     zlib          = require('zlib'),
-    archiver      = require('archiver');
+    archiver      = require('archiver'),
+    packageFile   = require('./package.json');
 
 var nodeWebkitVersion = "0.9.2";
 
@@ -44,7 +45,6 @@ var downloadFile = function(targetFile, remoteUrl, done) {
     });
 
     res.on('end', function () {
-      console.log('\n');
       done();
     });
   });
@@ -59,7 +59,7 @@ var zipFolder = function(folder, cwd, targetFile, cb) {
   output.on('close', function() {
     cb();
   });
-  
+
   archive.on('error', function(err) {
     cb(err);
   });
@@ -102,6 +102,13 @@ module.exports = function(grunt) {
           'build/js/app.js': ['coffee/**/*.coffee']
         }
       }
+    },
+
+    watch: {
+      app: {
+        files: ['coffee/**/*.coffee'],
+        tasks: ['build-coffeescript']
+      }
     }
   });
 
@@ -134,7 +141,7 @@ module.exports = function(grunt) {
     var done = this.async();
 
     var format = nwFormats[os];
-    var targetPath = 'dist/' + os + arch;
+    var targetPath = 'dist/' + packageFile.name + "-" + os + "-" + arch;
     var filename = getLocalNodeWebkitDownloadPath(os, arch, format);
 
     if(format == "zip") {
@@ -164,7 +171,7 @@ module.exports = function(grunt) {
               grunt.file.copy(file, targetPath + "/" + file);
           });
         }
-        zipFolder(targetPath, "dist/", "dist/"+os+arch+".zip", done);
+        zipFolder(targetPath, "dist/", "dist/"  + packageFile.name + "-" + os + "-" + arch + ".zip", done);
 
       });
 
@@ -190,11 +197,14 @@ module.exports = function(grunt) {
               grunt.file.copy(file, targetPath + "/" + file);
           });
           wrench.chmodSyncRecursive(targetPath, 0755);
-          zipFolder(targetPath, "dist/", "dist/"+os+arch+".zip", done);
+          zipFolder(targetPath, "dist/", "dist/" + packageFile.name + "-" + os + "-" + arch + ".zip", done);
         });
-
     }
   });
+
+  grunt.registerTask('publish-package-json', function() {
+    grunt.file.copy('./package.json', "dist/package.json");
+  })
 
   grunt.registerTask('bundle-node-webkit-app-mac', ['download-node-webkit-mac', 'bundle-node-webkit-app:osx:ia32']);
   grunt.registerTask('bundle-node-webkit-app-win', ['download-node-webkit-win','bundle-node-webkit-app:win:ia32']);
@@ -208,5 +218,7 @@ module.exports = function(grunt) {
   grunt.registerTask('build', ['build-coffeescript']);
 
   grunt.registerTask('dist', ['build', 'bundle-node-webkit-app-mac', 'bundle-node-webkit-app-win',
-  'bundle-node-webkit-app-linux32', 'bundle-node-webkit-app-linux64'])
+  'bundle-node-webkit-app-linux32', 'bundle-node-webkit-app-linux64', 'publish-package-json']);
+
+  grunt.registerTask('dev', ['build', 'watch:app']);
 }

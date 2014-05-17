@@ -15,47 +15,47 @@ localVersion = packageFile.version
 class Updater extends EventEmitter
   constructor: (@appName) ->
 
-  installUpdate: () ->
-    this._install_update_mac if /^darwin/.test process.platform
-    this._install_update_win if /^win/.test process.platform
-    this._install_update_linux if /^linux/.test process.platform
+  installUpdate: ->
+    this._install_update_mac() if /^darwin/.test process.platform
+    this._install_update_win() if /^win/.test process.platform
+    this._install_update_linux() if /^linux/.test process.platform
 
-  _install_update_mac: () ->
+  _install_update_mac: ->
     execPath = process.execPath
     filePath = execPath.substr(0, execPath.lastIndexOf("\\"))
     appPath = path.normalize(execPath + "/../../../../../../..")
     downloadTarget = os.tmpdir() + "/" + ".update.zip"
     extractFolder = os.tmpdir() + "/update/"
-    self = this
 
-    self.emit "download-started"
+    @emit "download-started"
 
-    progressCb = (state) -> self.emit("download-progress", state)
+    progressCb = (state) -> @emit("download-progress", state)
 
-    await self._download_update downloadTarget,
+    await @_download_update downloadTarget,
       "#{updateServer}/#{packageFile.name}-osx-ia32.zip",
       progressCb, defer err
 
     if err?
-      self.emit "download-failed", err
+      @emit "download-failed", err
+      console.log err
       return
 
-    self.emit "download-finished"
+    @emit "download-finished"
 
-    await self._extract_update downloadTarget, extractFolder, defer err
+    await @_extract_update downloadTarget, extractFolder, defer err
     if err?
-      self.emit "download-failed", err
+      @emit "download-failed", err
       return
-    await self._hide_original_mac appPath, @appName, defer err
+    await @_hide_original_mac appPath, @appName, defer err
     if err?
-      self.emit "download-failed", err
+      @emit "download-failed", err
       return
-    await self._copy_update_mac @appName, extractFolder, appPath, defer err
+    await @_copy_update_mac @appName, extractFolder, appPath, defer err
     if err?
-      self.emit "download-failed", err
+      @emit "download-failed", err
       return
 
-    self.emit "update-installed"
+    @emit "update-installed"
 
   _download_update: (targetPath, remoteUrl, progressCb, doneCb) ->
     progress request remoteUrl

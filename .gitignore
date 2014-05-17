@@ -25,4 +25,8 @@ build/Release
 node_modules
 
 build/
-dist/
+dist/*.zip
+dist/*.exe
+dist/rockband-keyboard-gui*
+dist/cache
+dist/package.json

@@ -1,4 +1,4 @@
-window.updater = new Updater()
+window.updater = new Updater("Rockband Keyboard")
 
 updater.update(
   (err) ->

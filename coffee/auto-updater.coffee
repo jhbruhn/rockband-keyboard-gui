@@ -6,45 +6,47 @@ os = require 'os'
 fs = require 'fs'
 wrench = require 'wrench'
 DecompressZip = require 'decompress-zip'
-
+{EventEmitter} = require 'events'
 packageFile = require './package.json'
-
-
 
 updateServer = packageFile.remoteUpdateUrl
 localVersion = packageFile.version
 
-class Updater
-  update: (cb) ->
-    this._update_mac cb if /^darwin/.test process.platform
-    this._update_win cb if /^win/.test process.platform
-    this._update_linux cb if /^linux/.test process.platform
+# @TODO: Error handling!
 
-  _update_mac: (cb) ->
+class Updater extends EventEmitter
+  constructor: (@appName) ->
+
+  update: () ->
+    this._update_mac if /^darwin/.test process.platform
+    this._update_win if /^win/.test process.platform
+    this._update_linux if /^linux/.test process.platform
+
+  _update_mac: () ->
     execPath = process.execPath
     filePath = execPath.substr(0, execPath.lastIndexOf("\\"))
-    appName = "Rockband Keyboard"
     appPath = path.normalize(execPath + "/../../../../../../..")
     downloadTarget = os.tmpdir() + "/" + ".update.zip"
     extractFolder = os.tmpdir() + "/update/"
     self = this
 
-    console.log "Requesting updates"
     this.is_update_available (err, update_available) ->
       if update_available
+        self.emit "download-started"
         self._download_update(downloadTarget,
          "#{updateServer}/#{packageFile.name}-osx-ia32.zip",
          (state) ->
-           console.log state
+           self.emit "download-progress", state
         , () ->
+          self.emit "download-finished"
           self._extract_update downloadTarget, extractFolder, (err) ->
-            console.log err
-            self._hide_original_mac(appPath, appName, (err) ->
-              self._copy_update_mac appName, extractFolder, appPath, cb
+            self._hide_original_mac(appPath, @appName, (err) ->
+              self._copy_update_mac @appName, extractFolder, appPath, (err) ->
+                self.emit "update-installed"
             )
         )
       else
-        console.log "No updates."
+        self.emit "no-update"
 
   _download_update: (targetPath, remoteUrl, progressCb, doneCb) ->
     progress(request(remoteUrl))
@@ -73,9 +75,9 @@ class Updater
       callback)
 
 
-  _update_win: (cb) ->
+  _update_win: () ->
 
-  _update_linux: (cb) ->
+  _update_linux: () ->
 
   is_update_available: (cb) ->
     request "#{updateServer}/package.json", (error, response, body) ->

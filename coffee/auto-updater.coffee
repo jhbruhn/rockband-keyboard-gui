@@ -12,17 +12,15 @@ packageFile = require './package.json'
 updateServer = packageFile.remoteUpdateUrl
 localVersion = packageFile.version
 
-# @TODO: Error handling!
-
 class Updater extends EventEmitter
   constructor: (@appName) ->
 
-  update: () ->
-    this._update_mac if /^darwin/.test process.platform
-    this._update_win if /^win/.test process.platform
-    this._update_linux if /^linux/.test process.platform
+  installUpdate: () ->
+    this._install_update_mac if /^darwin/.test process.platform
+    this._install_update_win if /^win/.test process.platform
+    this._install_update_linux if /^linux/.test process.platform
 
-  _update_mac: () ->
+  _install_update_mac: () ->
     execPath = process.execPath
     filePath = execPath.substr(0, execPath.lastIndexOf("\\"))
     appPath = path.normalize(execPath + "/../../../../../../..")
@@ -30,54 +28,62 @@ class Updater extends EventEmitter
     extractFolder = os.tmpdir() + "/update/"
     self = this
 
-    this.is_update_available (err, update_available) ->
-      if update_available
-        self.emit "download-started"
-        self._download_update(downloadTarget,
-         "#{updateServer}/#{packageFile.name}-osx-ia32.zip",
-         (state) ->
-           self.emit "download-progress", state
-        , () ->
-          self.emit "download-finished"
-          self._extract_update downloadTarget, extractFolder, (err) ->
-            self._hide_original_mac(appPath, @appName, (err) ->
-              self._copy_update_mac @appName, extractFolder, appPath, (err) ->
-                self.emit "update-installed"
-            )
-        )
-      else
-        self.emit "no-update"
+    self.emit "download-started"
+
+    progressCb = (state) -> self.emit("download-progress", state)
+
+    await self._download_update downloadTarget,
+      "#{updateServer}/#{packageFile.name}-osx-ia32.zip",
+      progressCb, defer err
+
+    if err?
+      self.emit "download-failed", err
+      return
+
+    self.emit "download-finished"
+
+    await self._extract_update downloadTarget, extractFolder, defer err
+    if err?
+      self.emit "download-failed", err
+      return
+    await self._hide_original_mac appPath, @appName, defer err
+    if err?
+      self.emit "download-failed", err
+      return
+    await self._copy_update_mac @appName, extractFolder, appPath, defer err
+    if err?
+      self.emit "download-failed", err
+      return
+
+    self.emit "update-installed"
 
   _download_update: (targetPath, remoteUrl, progressCb, doneCb) ->
-    progress(request(remoteUrl))
-      .on('progress', progressCb)
-      .on('error', doneCb)
-      .pipe(fs.createWriteStream(targetPath))
-      .on('close', doneCb)
+    progress request remoteUrl
+      .on 'progress', progressCb
+      .on 'error', doneCb
+      .pipe fs.createWriteStream targetPath
+      .on 'close', doneCb
 
   _extract_update: (sourceZip, targetFolder, done) ->
     unzipper = new DecompressZip(sourceZip)
     unzipper.on 'error', done
     unzipper.on 'extract', (log) -> done(null)
-    unzipper.extract({
-      path: targetFolder
-      })
+    unzipper.extract({ path: targetFolder })
 
   _hide_original_mac: (appPath, appName, cb) ->
     filename = appName + '.app'
-    fs.rename(appPath + '/' + filename, appPath + '/.' + filename, cb)
+    fs.rename appPath + '/' + filename, appPath + '/.' + filename, cb
 
   _copy_update_mac: (appName, from, to, callback) ->
-    wrench.copyDirRecursive(
-      from + '/' + appName + '.app',
-      to + '/' + appName + '.app',
-      {forceDelete: true},
-      callback)
+    wrench.copyDirRecursive from + '/' + appName + '.app',
+     to + '/' + appName + '.app',
+     {forceDelete: true},
+     callback
 
 
-  _update_win: () ->
+  _install_update_win: () ->
 
-  _update_linux: () ->
+  _install_update_linux: () ->
 
   is_update_available: (cb) ->
     request "#{updateServer}/package.json", (error, response, body) ->

@@ -7,19 +7,19 @@
 !include "FileFunc.nsh"
 
 ;General Settings
-!searchparse /file "../package.json" `  "version": "` PT_VERSION `",`
+!searchparse /file "../package.json" `  "version": "` RK_VERSION `",`
 Name "Rockband Keyboard"
-Caption "Rockband Keyboard v${PT_VERSION}"
-BrandingText "Rockband Keyboard v${PT_VERSION}"
+Caption "Rockband Keyboard v${RK_VERSION}"
+BrandingText "Rockband Keyboard v${RK_VERSION}"
 VIAddVersionKey "ProductName" "Rockband Keyboard"
-VIAddVersionKey "ProductVersion" "v${PT_VERSION}"
+VIAddVersionKey "ProductVersion" "v${RK_VERSION}"
 VIAddVersionKey "FileDescription" "Rockband Keyboard"
-VIAddVersionKey "FileVersion" "v${PT_VERSION}"
+VIAddVersionKey "FileVersion" "v${RK_VERSION}"
 VIAddVersionKey "CompanyName" "Jan-Henrik Bruhn"
 VIAddVersionKey "LegalCopyright" "https://github.com/jhbruhn/rockband-keyboard-gui"
-VIAddVersionKey "OriginalFilename" "Rockband-Keyboard-${PT_VERSION}-Win-32.exe"
-VIProductVersion "${PT_VERSION}.0"
-OutFile "Rockband-Keyboard-${PT_VERSION}-Win-32.exe"
+VIAddVersionKey "OriginalFilename" "Rockband-Keyboard-${RK_VERSION}-Win-32.exe"
+VIProductVersion "${RK_VERSION}.0"
+OutFile "Rockband-Keyboard-${RK_VERSION}-Win-32.exe"
 CRCCheck on
 SetCompressor /SOLID lzma
 !define NW_VER "0.9.2"
@@ -149,7 +149,7 @@ Section ; Shortcuts
 	CreateShortCut "$DESKTOP\Rockband Keyboard.lnk" "$INSTDIR\Rockband-Keyboard.exe" "" "" "" "" "" "Start Rockband Keyboard"
 
 	WriteRegStr HKLM "${UNINSTALLPATH}" "DisplayName" "Rockband Keyboard"
-	WriteRegStr HKLM "${UNINSTALLPATH}" "DisplayVersion" "${PT_VERSION}"
+	WriteRegStr HKLM "${UNINSTALLPATH}" "DisplayVersion" "${RK_VERSION}"
 	WriteRegStr HKLM "${UNINSTALLPATH}" "Publisher" "Jan-Henrik Bruhn"
 	WriteRegStr HKLM "${UNINSTALLPATH}" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
 	WriteRegStr HKLM "${UNINSTALLPATH}" "InstallLocation" "$\"$INSTDIR$\""

@@ -4,6 +4,7 @@ progress = require 'request-progress'
 path = require 'path'
 os = require 'os'
 fs = require 'fs'
+DecompressZip = require 'decompress-zip'
 
 packageFile = require './package.json'
 
@@ -23,26 +24,21 @@ class Updater
     filePath = execPath.substr(0, execPath.lastIndexOf("\\"))
     appPath = path.normalize(execPath ) #+ "/../../../../../../..")
     downloadTarget = os.tmpdir() + "/" + ".update.zip"
+    extractFolder = os.tmpdir() + "/update/"
     self = this
 
     console.log "Requesting updates"
-
-    request "#{updateServer}/package.json", (error, response, body) ->
-      console.log response
-      if error
-        cb(error)
-        return
-
-      remotePackage = JSON.parse body
-      remoteVersion = remotePackage.version
-      console.log "Remote Version: #{remoteVersion}"
-      if semver.lt(localVersion, remoteVersion)
-        console.log "Remote is newer!"
+    this.is_update_available (err, update_available) ->
+      if update_available
         self._download_update(downloadTarget,
          "#{updateServer}/#{packageFile.name}-osx-ia32.zip",
          (state) ->
            console.log state
-        , cb)
+        , () ->
+          self._extract_update downloadTarget, extractFolder, (err) ->
+            console.log err
+            cb(err)
+        )
       else
         console.log "No updates."
 
@@ -53,9 +49,26 @@ class Updater
       .pipe(fs.createWriteStream(targetPath))
       .on('close', doneCb)
 
+  _extract_update: (sourceZip, targetFolder, done) ->
+    unzipper = new DecompressZip(sourceZip)
+    unzipper.on 'error', done
+    unzipper.on 'extract', (log) -> done(null)
+    unzipper.extract({
+      path: targetFolder
+      })
 
   _update_win: (cb) ->
 
   _update_linux: (cb) ->
+
+  is_update_available: (cb) ->
+    request "#{updateServer}/package.json", (error, response, body) ->
+      if error?
+        cb(error)
+        return
+
+      remotePackage = JSON.parse body
+      remoteVersion = remotePackage.version
+      cb(null, semver.lt(localVersion, remoteVersion))
 
 window.Updater = Updater

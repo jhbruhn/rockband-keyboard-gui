@@ -27,4 +27,4 @@ updater.on "update-installed", ->
 
 await updater.is_update_available defer err, av
 
-updater.installUpdate() if av
+updater.installUpdate() if av && !updater.isInDev()

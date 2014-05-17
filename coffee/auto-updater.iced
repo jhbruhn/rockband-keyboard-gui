@@ -105,4 +105,7 @@ class Updater extends EventEmitter
       remoteVersion = remotePackage.version
       cb(null, semver.lt(options.localVersion, remoteVersion))
 
+  isInDev: ->
+    return _.contains(require('fs').readdirSync('.'), '.git')
+
 window.Updater = Updater

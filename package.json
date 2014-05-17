@@ -31,7 +31,8 @@
   },
   "dependencies": {
     "semver": "^2.3.0",
-    "request": "^2.34.0"
+    "request": "^2.34.0",
+    "request-progress": "^0.3.1"
   },
   "remoteUpdateUrl": "http://localhost:8080"
 }

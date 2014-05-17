@@ -1,8 +1,9 @@
 semver = require 'semver'
 request = require 'request'
+progress = require 'request-progress'
 path = require 'path'
-url = require 'url'
 fs = require 'fs'
+
 packageFile = require './package.json'
 
 
@@ -17,11 +18,14 @@ class Updater
     this._update_linux cb if /^linux/.test process.platform
 
   _update_mac: (cb) ->
-    execPath = process.execPath
+    execPath = "." #process.execPath
     filePath = execPath.substr(0, execPath.lastIndexOf("\\"))
-    appPath = path.normalize(execPath )#+ "/../../../../../../..")
+    appPath = path.normalize(execPath ) #+ "/../../../../../../..")
+
     self = this
+
     console.log "Requesting updates"
+
     request "#{updateServer}/package.json", (error, response, body) ->
       console.log response
       if error
@@ -35,47 +39,21 @@ class Updater
         console.log "Remote is newer!"
         self._download_update_mac(appPath,
          "#{updateServer}/#{packageFile.name}-osx-ia32.zip",
-         null
+         ->
         , cb)
       else
         console.log "No updates."
 
-  _download_update_mac: (appPath, remoteUrl, progressCb, doneCb) ->
+  _download_update: (appPath, remoteUrl, progressCb, doneCb) ->
     tempName = '.nw-update.zip'
     location = appPath + "/" + tempName
 
-    parsed = url.parse remoteUrl
-    options = {
-      host: parsed.hostname
-      port: parsed.port
-      path: parsed.pathname
-    }
+    progress(request(remoteUrl))
+      .on('progress', progressCb)
+      .on('error', doneCb)
+      .pipe(fs.createWriteStream(location))
+      .on('close', doneCb)
 
-    http = require('http')
-    httpRequest = http.get(options, (res) ->
-      res.setEncoding('binary')
-
-      data = ''
-      rln=0
-      percent=0
-      ln=res.headers['content-length']
-
-      res.on('data', (chunk) ->
-        rln += chunk.length
-        data += chunk
-
-        p = Math.round((rln/ln)*100)
-
-        if (p > percent)
-          percent = p
-          progressCb(p)
-
-      )
-
-      res.on('end', ->
-        fs.writeFile(location, data, 'binary', doneCb)
-      )
-    )
 
   _update_win: (cb) ->
 

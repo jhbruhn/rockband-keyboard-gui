@@ -5,15 +5,23 @@ path = require 'path'
 os = require 'os'
 fs = require 'fs'
 wrench = require 'wrench'
+_ = require 'lodash'
 DecompressZip = require 'decompress-zip'
 {EventEmitter} = require 'events'
-packageFile = require './package.json'
-
-updateServer = packageFile.remoteUpdateUrl
-localVersion = packageFile.version
 
 class Updater extends EventEmitter
-  constructor: (@appName) ->
+  constructor: (options) ->
+    @options = {
+      localVersion: "1.0.0"
+      osxAppName: "node-webkit"
+      updateServer: "http://localhost:8080"
+      remoteFilenameOSX: "nw-osx-ia32.zip"
+      remoteFilenameWin: "nw-win-ia32.zip"
+      remoteFilenameLinux32: "nw-linux-ia32.zip"
+      remoteFilenameLinux64: "nw-linux-x64.zip"
+    }
+    @options = _.extend @options, options
+    console.log @options
 
   installUpdate: ->
     this._install_update_mac() if /^darwin/.test process.platform
@@ -32,7 +40,7 @@ class Updater extends EventEmitter
     progressCb = (state) -> @emit("download-progress", state)
 
     await @_download_update downloadTarget,
-      "#{updateServer}/#{packageFile.name}-osx-ia32.zip",
+      "#{@options.updateServer}/#{@options.remoteFilenameOSX}",
       progressCb, defer err
 
     if err?
@@ -46,11 +54,12 @@ class Updater extends EventEmitter
     if err?
       @emit "download-failed", err
       return
-    await @_hide_original_mac appPath, @appName, defer err
+    await @_hide_original_mac appPath, @options.osxAppName, defer err
     if err?
       @emit "download-failed", err
       return
-    await @_copy_update_mac @appName, extractFolder, appPath, defer err
+    await @_copy_update_mac @options.osxAppName,
+     extractFolder, appPath, defer err
     if err?
       @emit "download-failed", err
       return
@@ -86,13 +95,14 @@ class Updater extends EventEmitter
   _install_update_linux: () ->
 
   is_update_available: (cb) ->
-    request "#{updateServer}/package.json", (error, response, body) ->
+    options = @options
+    request "#{@options.updateServer}/package.json", (error, response, body) ->
       if error?
         cb(error)
         return
 
       remotePackage = JSON.parse body
       remoteVersion = remotePackage.version
-      cb(null, semver.lt(localVersion, remoteVersion))
+      cb(null, semver.lt(options.localVersion, remoteVersion))
 
 window.Updater = Updater

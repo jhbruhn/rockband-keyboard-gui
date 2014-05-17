@@ -93,13 +93,13 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     coffeelint: {
-      app: ['coffee/**/*.coffee']
+      app: ['coffee/**/*.iced']
     },
 
     coffee: {
       app: {
         files: {
-          'build/js/app.js': ['coffee/**/*.coffee']
+          'build/js/app.js': ['coffee/**/*.iced']
         }
       }
     },

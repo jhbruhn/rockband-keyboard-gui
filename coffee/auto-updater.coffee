@@ -2,6 +2,7 @@ semver = require 'semver'
 request = require 'request'
 progress = require 'request-progress'
 path = require 'path'
+os = require 'os'
 fs = require 'fs'
 
 packageFile = require './package.json'
@@ -21,7 +22,7 @@ class Updater
     execPath = "." #process.execPath
     filePath = execPath.substr(0, execPath.lastIndexOf("\\"))
     appPath = path.normalize(execPath ) #+ "/../../../../../../..")
-
+    downloadTarget = os.tmpdir() + "/" + ".update.zip"
     self = this
 
     console.log "Requesting updates"
@@ -37,21 +38,19 @@ class Updater
       console.log "Remote Version: #{remoteVersion}"
       if semver.lt(localVersion, remoteVersion)
         console.log "Remote is newer!"
-        self._download_update_mac(appPath,
+        self._download_update(downloadTarget,
          "#{updateServer}/#{packageFile.name}-osx-ia32.zip",
-         ->
+         (state) ->
+           console.log state
         , cb)
       else
         console.log "No updates."
 
-  _download_update: (appPath, remoteUrl, progressCb, doneCb) ->
-    tempName = '.nw-update.zip'
-    location = appPath + "/" + tempName
-
+  _download_update: (targetPath, remoteUrl, progressCb, doneCb) ->
     progress(request(remoteUrl))
       .on('progress', progressCb)
       .on('error', doneCb)
-      .pipe(fs.createWriteStream(location))
+      .pipe(fs.createWriteStream(targetPath))
       .on('close', doneCb)
 
 

@@ -4,6 +4,7 @@ progress = require 'request-progress'
 path = require 'path'
 os = require 'os'
 fs = require 'fs'
+wrench = require 'wrench'
 DecompressZip = require 'decompress-zip'
 
 packageFile = require './package.json'
@@ -20,9 +21,10 @@ class Updater
     this._update_linux cb if /^linux/.test process.platform
 
   _update_mac: (cb) ->
-    execPath = "." #process.execPath
+    execPath = process.execPath
     filePath = execPath.substr(0, execPath.lastIndexOf("\\"))
-    appPath = path.normalize(execPath ) #+ "/../../../../../../..")
+    appName = "Rockband Keyboard"
+    appPath = path.normalize(execPath + "/../../../../../../..")
     downloadTarget = os.tmpdir() + "/" + ".update.zip"
     extractFolder = os.tmpdir() + "/update/"
     self = this
@@ -37,7 +39,9 @@ class Updater
         , () ->
           self._extract_update downloadTarget, extractFolder, (err) ->
             console.log err
-            cb(err)
+            self._hide_original_mac(appPath, appName, (err) ->
+              self._copy_update_mac appName, extractFolder, appPath, cb
+            )
         )
       else
         console.log "No updates."
@@ -56,6 +60,18 @@ class Updater
     unzipper.extract({
       path: targetFolder
       })
+
+  _hide_original_mac: (appPath, appName, cb) ->
+    filename = appName + '.app'
+    fs.rename(appPath + '/' + filename, appPath + '/.' + filename, cb)
+
+  _copy_update_mac: (appName, from, to, callback) ->
+    wrench.copyDirRecursive(
+      from + '/' + appName + '.app',
+      to + '/' + appName + '.app',
+      {forceDelete: true},
+      callback)
+
 
   _update_win: (cb) ->
 

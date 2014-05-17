@@ -29,7 +29,8 @@ module.exports = function(grunt) {
       nwVersion: "0.9.2",
       distFiles: ["build/**/*.*", './node_modules/**', '!./node_modules/grunt*/**',
                  '!./node_modules/nodewebkit*/**', "package.json", 'index.html'],
-      name: "rockband-keyboard-gui"
+      name: "rockband-keyboard-gui",
+      osxName: "Rockband Keyboard"
     }
   });
 

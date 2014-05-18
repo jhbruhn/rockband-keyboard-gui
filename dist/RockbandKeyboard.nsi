@@ -19,7 +19,7 @@ VIAddVersionKey "CompanyName" "Jan-Henrik Bruhn"
 VIAddVersionKey "LegalCopyright" "https://github.com/jhbruhn/rockband-keyboard-gui"
 VIAddVersionKey "OriginalFilename" "Rockband-Keyboard-Win-32.exe"
 VIProductVersion "${RK_VERSION}.0"
-OutFile "Rockband-Keyboard-${RK_VERSION}-Win-32.exe"
+OutFile "Rockband-Keyboard-Win-32.exe"
 CRCCheck on
 SetCompressor /SOLID lzma
 !define NW_VER "0.9.2"

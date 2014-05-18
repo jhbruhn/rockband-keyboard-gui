@@ -33,6 +33,8 @@ RequestExecutionLevel user
 
 ;Define UI settings
 !define MUI_LICENSEPAGE_BGCOLOR /GRAY
+!define MUI_ICON "..\res\icon.ico"
+!define MUI_UNICON "..\res\icon.ico"
 !define MUI_ABORTWARNING
 !define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_TEXT "Start Rockband Keyboard"
@@ -136,24 +138,24 @@ Section ; Shortcuts
 	SetOutPath "$INSTDIR"
 
 	;Working Directory Shortcut
-	CreateShortCut "$INSTDIR\Start Rockband Keyboard.lnk" "$INSTDIR\Rockband-Keyboard.exe" "" "" "" "" "" "Start Rockband Keyboard"
+	CreateShortCut "$INSTDIR\Start Rockband Keyboard.lnk" "$INSTDIR\Rockband-Keyboard.exe" "" "$INSTDIR\res\icon.ico" "" "" "" "Start Rockband Keyboard"
 
 	;Start Menu Shortcut
 	RMDir /r "$SMPROGRAMS\Rockband Keyboard"
 	CreateDirectory "$SMPROGRAMS\Rockband Keyboard"
-	CreateShortCut "$SMPROGRAMS\Rockband Keyboard\Rockband Keyboard.lnk" "$INSTDIR\Rockband-Keyboard.exe" "" "$INSTDIR\Rockband-Keyboard.ico" "" "" "" "Start Rockband Keyboard"
+	CreateShortCut "$SMPROGRAMS\Rockband Keyboard\Rockband Keyboard.lnk" "$INSTDIR\Rockband-Keyboard.exe" "" "$INSTDIR\res\icon.ico" "" "" "" "Start Rockband Keyboard"
 	CreateShortCut "$SMPROGRAMS\Rockband Keyboard\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
 
 	;Desktop Shortcut
 	Delete "$DESKTOP\Rockband Keyboard.lnk"
-	CreateShortCut "$DESKTOP\Rockband Keyboard.lnk" "$INSTDIR\Rockband-Keyboard.exe" "" "" "" "" "" "Start Rockband Keyboard"
+	CreateShortCut "$DESKTOP\Rockband Keyboard.lnk" "$INSTDIR\Rockband-Keyboard.exe" "" "$INSTDIR\res\icon.ico" "" "" "" "Start Rockband Keyboard"
 
 	WriteRegStr HKLM "${UNINSTALLPATH}" "DisplayName" "Rockband Keyboard"
 	WriteRegStr HKLM "${UNINSTALLPATH}" "DisplayVersion" "${RK_VERSION}"
 	WriteRegStr HKLM "${UNINSTALLPATH}" "Publisher" "Jan-Henrik Bruhn"
 	WriteRegStr HKLM "${UNINSTALLPATH}" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
 	WriteRegStr HKLM "${UNINSTALLPATH}" "InstallLocation" "$\"$INSTDIR$\""
-	WriteRegStr HKLM "${UNINSTALLPATH}" "DisplayIcon" "$\"$INSTDIR\Popcorn-Time.ico$\""
+	WriteRegStr HKLM "${UNINSTALLPATH}" "DisplayIcon" "$\"$INSTDIR\res\icon.ico$\""
 	WriteRegStr HKLM "${UNINSTALLPATH}" "URLInfoAbout" "https://github.com/jhbruhn/rockband-keyboard-gui"
 	WriteRegStr HKLM "${UNINSTALLPATH}" "HelpLink" "https://github.com/jhbruhn/rockband-keyboard-gui/issues"
 	WriteRegDWORD HKLM "${UNINSTALLPATH}" "NoModify" 1

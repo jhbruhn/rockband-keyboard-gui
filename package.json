@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "A gui for using the Rockband-Keyboard as a wireless MIDI-Device.",
   "main": "index.html",
+  "window": {
+    "icon": "res/icon.png"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

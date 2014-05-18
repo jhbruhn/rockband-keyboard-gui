@@ -1,6 +1,7 @@
 //
 module.exports = function(grunt) {
   require('time-grunt')(grunt);
+  var packageJson = require('./package.json');
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -27,11 +28,13 @@ module.exports = function(grunt) {
     build_node_webkit: {
       targetDir: "dist",
       nwVersion: "0.9.2",
-      distFiles: ["build/**/*.*", './node_modules/**', '!./node_modules/grunt*/**',
+      distFiles: ["build/**/*.*", "res/**/*",  './node_modules/**', '!./node_modules/grunt*/**',
                  '!./node_modules/nodewebkit*/**', "package.json", 'index.html'],
       name: "rockband-keyboard-gui",
-      osxName: "Rockband Keyboard"
-    }
+      osxName: "Rockband Keyboard",
+      icns: "./res/icon.icns",
+      version: "<%= pkg.version %>"
+  }
   });
 
   grunt.registerTask('publish-package-json', function() {

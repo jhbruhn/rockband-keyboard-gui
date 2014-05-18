@@ -81,6 +81,8 @@ class Updater extends EventEmitter
     unzipper.extract({
       path: targetFolder,
       filter: (file) ->
+        if /^darwin/.test process.platform
+          return true
         return not /^nw.pak/.test file.filename # YOLO to the max.
       
     })

@@ -16,14 +16,13 @@ updaterOptions = {
 window.updater = updater = new Updater(updaterOptions)
 
 updater.on "download-started", ->
-  alert "Download started!"
+
 updater.on "download-failed", (err) ->
-  alert "Download Failed"
   console.log err
 updater.on "download-finished", ->
-  alert "Download finished!"
+  
 updater.on "update-installed", ->
-  alert "Update installed!"
+  alert "A new Update was installed! Please finish your work and restart this application! (Also we shouldn't be that intrusive.)"
 
 await updater.isUpdateAvailable defer err, av
 

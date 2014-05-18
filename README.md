@@ -4,7 +4,7 @@ rockband-keyboard-gui
 A gui for using the Rockband-Keyboard as a wireless MIDI-Device.
 
 Windows Build:
-https://jhbruhn.github.io/rockband-keyboard-gui/Rockband-Keyboard-0.0.0-Win-32.exe
+https://jhbruhn.github.io/rockband-keyboard-gui/Rockband-Keyboard-Win-32.exe
 
 Mac Build:
 https://jhbruhn.github.io/rockband-keyboard-gui/rockband-keyboard-gui-osx-ia32.zip

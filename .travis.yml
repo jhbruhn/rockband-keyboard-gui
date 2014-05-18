@@ -1,0 +1,12 @@
+language: node_js
+install:
+- npm install
+- npm install -g grunt-cli
+- apt-get install makensis nsis
+script:
+- grunt dist
+- cd dist/; makensis RockbandKeyboard.nsi
+after_success: ./deploy.sh
+env:
+  global:
+    secure: jJpmP8ffZKnkWw/WfV8BaPwk4GC24Rj59qvWGgyvke2nWKoxoao347lpjetuofLnbbtpnMW5M2u9B/zYTMlESA90EAS+F0zfl2HEkqSNir837KoiL+6tO9Dxx2N+4yFfZR+fRvKd6j/TyN5RYQ1sJbFoCgmizJP9c90gZMLFbMQ=

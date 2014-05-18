@@ -5,7 +5,7 @@ install:
 - sudo apt-get install nsis
 script:
 - grunt dist
-- cd dist/; makensis RockbandKeyboard.nsi
+- cd dist/; makensis RockbandKeyboard.nsi; cd ..
 after_success: ./deploy.sh
 env:
   global:

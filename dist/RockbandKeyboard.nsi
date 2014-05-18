@@ -125,7 +125,7 @@ Section ; App Files
 	SetOutPath "$INSTDIR"
 
 	;Add the files
-	File "rockband-keyboard-gui-win-ia32\*.*"
+	File /r "rockband-keyboard-gui-win-ia32\*.*"
 	File "/oname=Rockband-Keyboard.exe" "rockband-keyboard-gui-win-ia32\nw.exe"
 
 	;Create uninstaller

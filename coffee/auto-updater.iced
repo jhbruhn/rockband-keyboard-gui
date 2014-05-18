@@ -6,6 +6,7 @@ os = require 'os'
 fs = require 'fs'
 wrench = require 'wrench'
 _ = require 'lodash'
+unzip = require 'unzip'
 DecompressZip = require 'decompress-zip'
 {EventEmitter} = require 'events'
 
@@ -75,9 +76,14 @@ class Updater extends EventEmitter
 
   _extractUpdate: (sourceZip, targetFolder, done) ->
     unzipper = new DecompressZip(sourceZip)
-    unzipper.on 'error', done
+    unzipper.on 'error', (err) -> console.log err
     unzipper.on 'extract', (log) -> done(null)
-    unzipper.extract({ path: targetFolder })
+    unzipper.extract({
+      path: targetFolder,
+      filter: (file) ->
+        return not /^nw.pak/.test file.filename # YOLO to the max.
+      
+    })
 
   _hideOriginalMac: (appPath, appName, cb) ->
     filename = appName + '.app'
@@ -107,13 +113,42 @@ class Updater extends EventEmitter
     if err?
       @emit "download-failed", err
       return
+
     await @_extractUpdate downloadTarget, extractFolder, defer err
+    console.log "Extraction finished."
     if err?
+      console.log err
       @emit "download-failed", err
       return
-    wrench.copyDirSyncRecursive(extractFolder, appFolder, {
-      forceDelete: true
-    })
+    
+    console.log "Moving old Files."
+    fs.readdirSync(appFolder).forEach (file) ->
+      filePath = "#{appFolder}/#{file}"
+      stats = fs.lstatSync(filePath)
+      if stats.isFile()
+        try
+          fs.unlinkSync("#{appFolder}/#{file}")
+        catch e
+          console.log "Couldn delete #{file}, renaming."
+          try
+            fs.renameSync(filePath, "#{appFolder}/#{file}.old")
+          catch e
+            #yolo
+      else
+        try
+          wrench.rmdirSyncRecursive(filePath, ->)
+        catch e
+          #yolo
+    
+    console.log "Copying files."
+    
+    try
+      console.log wrench.copyDirSyncRecursive(extractFolder, appFolder, {
+        forceDelete: true
+      })
+    catch e
+      #peda
+    console.log "Files copied."
     @emit "update-installed"
 
 

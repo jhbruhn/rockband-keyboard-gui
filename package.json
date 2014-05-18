@@ -38,7 +38,11 @@
     "request": "^2.34.0",
     "request-progress": "^0.3.1",
     "wrench": "^1.5.8",
-    "lodash": "^2.4.1"
+    "lodash": "^2.4.1",
+    "lodash.merge": "^2.4.1",
+    "lodash.bind": "^2.4.1",
+    "lodash.forin": "^2.4.1",
+    "unzip": "^0.1.9"
   },
   "remoteUpdateUrl": "http://localhost:8080"
 }

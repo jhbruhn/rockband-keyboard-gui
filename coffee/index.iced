@@ -25,6 +25,6 @@ updater.on "download-finished", ->
 updater.on "update-installed", ->
   alert "Update installed!"
 
-await updater.is_update_available defer err, av
+await updater.isUpdateAvailable defer err, av
 
 updater.installUpdate() if av && !updater.isInDev()

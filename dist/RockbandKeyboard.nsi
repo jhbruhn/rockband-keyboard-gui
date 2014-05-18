@@ -26,7 +26,7 @@ SetCompressor /SOLID lzma
 !define UNINSTALLPATH "Software\Microsoft\Windows\CurrentVersion\Uninstall\Rockband-Keyboard"
 
 ;Default installation folder
-InstallDir "$APPDATA\Popcorn Time"
+InstallDir "$APPDATA\Rockband Keyboard"
 
 ;Request application privileges
 RequestExecutionLevel user

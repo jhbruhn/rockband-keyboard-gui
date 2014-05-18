@@ -43,5 +43,5 @@
     "lodash.forin": "^2.4.1",
     "decompress-zip": "0.0.6"
   },
-  "remoteUpdateUrl": "http://localhost:8080"
+  "remoteUpdateUrl": "https://jhbruhn.github.io/rockband-keyboard-gui"
 }

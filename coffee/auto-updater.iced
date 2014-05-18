@@ -91,8 +91,62 @@ class Updater extends EventEmitter
 
 
   _installUpdateWin: () ->
+    execPath = process.execPath
+    appFolder = execPath.substr(0, execPath.lastIndexOf("\\"))
+    downloadTarget = os.tmpdir() + "/" + ".update.zip"
+    extractFolder = os.tmpdir() + "/update/"
+
+    @emit "download-started"
+
+    progressCb = (state) -> @emit("download-progress", state)
+
+    await @_downloadUpdate downloadTarget,
+      "#{@options.updateServer}/#{@options.remoteFilenameWin}",
+      progressCb, defer err
+
+    if err?
+      @emit "download-failed", err
+      return
+    await @_extractUpdate downloadTarget, extractFolder, defer err
+    if err?
+      @emit "download-failed", err
+      return
+    wrench.copyDirSyncRecursive(extractFolder, appFolder, {
+      forceDelete: true
+    })
+    @emit "update-installed"
+
 
   _installUpdateLinux: () ->
+    execPath = process.execPath
+    appFolder = execPath.substr(0, execPath.lastIndexOf("\\"))
+    downloadTarget = os.tmpdir() + "/" + ".update.zip"
+    extractFolder = os.tmpdir() + "/update/"
+
+    @emit "download-started"
+
+    progressCb = (state) -> @emit("download-progress", state)
+
+    remoteUrl = "#{@options.updateServer}/#{@options.remoteFilenameLinux32}"
+    if os.arch() == "x64"
+      remoteUrl = "#{@options.updateServer}/#{@options.remoteFilenameLinux64}"
+
+    await @_downloadUpdate downloadTarget,
+      remoteUrl,
+      progressCb, defer err
+
+    if err?
+      @emit "download-failed", err
+      return
+    await @_extractUpdate downloadTarget, extractFolder, defer err
+    if err?
+      @emit "download-failed", err
+      return
+    wrench.copyDirSyncRecursive(extractFolder, appFolder, {
+      forceDelete: true
+    })
+    @emit "update-installed"
+
 
   isUpdateAvailable: (cb) ->
     options = @options

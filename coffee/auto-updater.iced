@@ -6,7 +6,6 @@ os = require 'os'
 fs = require 'fs'
 wrench = require 'wrench'
 _ = require 'lodash'
-unzip = require 'unzip'
 DecompressZip = require 'decompress-zip'
 {EventEmitter} = require 'events'
 

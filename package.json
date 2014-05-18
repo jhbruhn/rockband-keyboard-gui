@@ -1,6 +1,6 @@
 {
   "name": "rockband-keyboard-gui",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A gui for using the Rockband-Keyboard as a wireless MIDI-Device.",
   "main": "index.html",
   "window": {

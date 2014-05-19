@@ -34,10 +34,10 @@ class Updater extends EventEmitter
     appPath = path.normalize(execPath + "/../../../../../../..")
     downloadTarget = os.tmpdir() + "/" + ".update.zip"
     extractFolder = os.tmpdir() + "/update/"
-
+    self = this
     @emit "download-started"
 
-    progressCb = (state) -> @emit("download-progress", state)
+    progressCb = (state) -> self.emit("download-progress", state)
 
     await @_downloadUpdate downloadTarget,
       "#{@options.updateServer}/#{@options.remoteFilenameOSX}",
@@ -63,7 +63,7 @@ class Updater extends EventEmitter
     if err?
       @emit "download-failed", err
       return
-
+    wrench.chmodSyncRecursive appPath, '0755'
     @emit "update-installed"
 
   _downloadUpdate: (targetPath, remoteUrl, progressCb, doneCb) ->
@@ -83,7 +83,7 @@ class Updater extends EventEmitter
         if /^darwin/.test process.platform
           return true
         return not /^nw.pak/.test file.filename # YOLO to the max.
-      
+
     })
 
   _hideOriginalMac: (appPath, appName, cb) ->
@@ -102,10 +102,10 @@ class Updater extends EventEmitter
     appFolder = execPath.substr(0, execPath.lastIndexOf("\\"))
     downloadTarget = os.tmpdir() + "/" + ".update.zip"
     extractFolder = os.tmpdir() + "/update/"
-
+    self = this
     @emit "download-started"
 
-    progressCb = (state) -> @emit("download-progress", state)
+    progressCb = (state) -> self.emit("download-progress", state)
 
     await @_downloadUpdate downloadTarget,
       "#{@options.updateServer}/#{@options.remoteFilenameWin}",
@@ -121,7 +121,7 @@ class Updater extends EventEmitter
       console.log err
       @emit "download-failed", err
       return
-    
+
     console.log "Moving old Files."
     fs.readdirSync(appFolder).forEach (file) ->
       filePath = "#{appFolder}/#{file}"
@@ -140,9 +140,9 @@ class Updater extends EventEmitter
           wrench.rmdirSyncRecursive(filePath, ->)
         catch e
           #yolo
-    
+
     console.log "Copying files."
-    
+
     try
       console.log wrench.copyDirSyncRecursive(extractFolder, appFolder, {
         forceDelete: true
@@ -158,10 +158,10 @@ class Updater extends EventEmitter
     appFolder = execPath.substr(0, execPath.lastIndexOf("\\"))
     downloadTarget = os.tmpdir() + "/" + ".update.zip"
     extractFolder = os.tmpdir() + "/update/"
-
+    self = this
     @emit "download-started"
 
-    progressCb = (state) -> @emit("download-progress", state)
+    progressCb = (state) -> self.emit("download-progress", state)
 
     remoteUrl = "#{@options.updateServer}/#{@options.remoteFilenameLinux32}"
     if os.arch() == "x64"

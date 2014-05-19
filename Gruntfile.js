@@ -13,7 +13,8 @@ module.exports = function(grunt) {
     coffee: {
       app: {
         files: {
-          'build/js/app.js': ['coffee/**/*.iced']
+          'build/js/app.js': ['coffee/**/*.iced', '!coffee/updater.iced'],
+          'build/js/updater.js': ['coffee/updater.iced']
         }
       }
     },
@@ -29,7 +30,7 @@ module.exports = function(grunt) {
       targetDir: "dist",
       nwVersion: "0.9.2",
       distFiles: ["build/**/*.*", "res/**/*",  './node_modules/**', '!./node_modules/grunt*/**',
-                 '!./node_modules/nodewebkit*/**', '!./node_modules/archiver*/**', "package.json", 'index.html'],
+                 '!./node_modules/nodewebkit*/**', '!./node_modules/archiver*/**', "package.json", 'index.html', 'update.html'],
       name: "rockband-keyboard-gui",
       osxName: "Rockband Keyboard",
       icns: "./res/icon.icns",

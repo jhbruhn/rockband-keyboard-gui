@@ -1,3 +1,5 @@
+gui = require 'nw.gui'
+
 packageFile = require './package.json'
 
 updateServer = packageFile.remoteUpdateUrl
@@ -16,11 +18,16 @@ updaterOptions = {
 window.updater = updater = new Updater(updaterOptions)
 
 updater.on "download-started", ->
-
+  window.updaterWindow = gui.Window.get(
+    window.open('./update.html')
+  )
 updater.on "download-failed", (err) ->
-  console.log err
+  window.updaterWindow.emit("message", err)
+  alert err
 updater.on "download-finished", ->
-
+  window.updaterWindow.emit("message", "Download Finished, installing...")
+updater.on "download-progress", (state) ->
+  window.updaterWindow.emit("progress", state)
 updater.on "update-installed", ->
   alert "A new Update was installed!
     Please finish your work and restart this application!
@@ -28,4 +35,4 @@ updater.on "update-installed", ->
 
 await updater.isUpdateAvailable defer err, av
 
-updater.installUpdate() if av && !updater.isInDev()
+updater.installUpdate() #if av #&& !updater.isInDev()

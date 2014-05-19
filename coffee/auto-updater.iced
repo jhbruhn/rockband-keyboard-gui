@@ -63,7 +63,14 @@ class Updater extends EventEmitter
     if err?
       @emit "download-failed", err
       return
+
     wrench.chmodSyncRecursive appPath, '0755'
+
+    await @_removeOldReleaseMac appPath, @options.osxAppName, defer err
+    if err?
+      @emit "download-failed", err
+      return
+
     @emit "update-installed"
 
   _downloadUpdate: (targetPath, remoteUrl, progressCb, doneCb) ->
@@ -89,6 +96,11 @@ class Updater extends EventEmitter
   _hideOriginalMac: (appPath, appName, cb) ->
     filename = appName + '.app'
     fs.rename appPath + '/' + filename, appPath + '/.' + filename, cb
+
+  _removeOldReleaseMac: (appPath, appName, cb) ->
+    filename = appName + '.app'
+    wrench.rmdirSyncRecursive appPath + '/.' + filename
+    cb()
 
   _copyUpdateMac: (appName, from, to, callback) ->
     wrench.copyDirRecursive from + '/' + appName + '.app',

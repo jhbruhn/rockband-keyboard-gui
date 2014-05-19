@@ -26,6 +26,19 @@ module.exports = function(grunt) {
       }
     },
 
+    concat: {
+      jsLibs: {
+        src: ['bower_components/jquery/dist/jquery.js',
+              'bower_components/bootstrap/dist/bootstrap.js'],
+        dest: 'build/js/libs.js'
+      },
+      cssLibs: {
+        src: ['bower_components/bootstrap/dist/css/bootstrap.css',
+              'bower_components/bootstrap/dist/css/bootstrap-theme.css'],
+        dest: 'build/css/libs.css'
+      }
+    },
+
     build_node_webkit: {
       targetDir: "dist",
       nwVersion: "0.9.2",
@@ -45,7 +58,14 @@ module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
 
   grunt.registerTask('build-coffeescript', ['coffeelint', 'coffee:app']);
-  grunt.registerTask('build', ['build-coffeescript']);
+
+  grunt.registerTask('build-js-libs', ['concat:jsLibs']);
+  grunt.registerTask('build-js', ['build-coffeescript', 'build-js-libs']);
+
+  grunt.registerTask('build-css-libs', ['concat:cssLibs']);
+  grunt.registerTask('build-css', ['build-css-libs'])
+
+  grunt.registerTask('build', ['build-js', 'build-css']);
 
   grunt.registerTask('dist', ['build', 'bundle-node-webkit-app-mac', 'bundle-node-webkit-app-win',
   'bundle-node-webkit-app-linux32', 'bundle-node-webkit-app-linux64', 'publish-package-json']);

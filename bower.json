@@ -1,0 +1,22 @@
+{
+  "name": "rockband-keyboard-gui",
+  "version": "0.0.2",
+  "homepage": "https://github.com/jhbruhn/rockband-keyboard-gui",
+  "authors": [
+    "Jan-Henrik Bruhn <jh.bruhn@me.com>"
+  ],
+  "main": "index.html",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.1.1",
+    "jquery": "~2.1.1"
+  }
+}

@@ -1,11 +1,15 @@
 language: node_js
 install:
-- npm install
-- npm install -g grunt-cli
-- sudo apt-get install nsis
+  - npm install
+  - npm install -g grunt-cli
+  - npm install -g bower
+  - sudo apt-get install nsis
 script:
-- grunt dist
-- cd dist/; makensis RockbandKeyboard.nsi; cd ..
+  - bower install
+  - grunt dist
+  - cd dist/
+  - makensis RockbandKeyboard.nsi
+  - cd ..
 after_success: ./deploy.sh
 env:
   global:

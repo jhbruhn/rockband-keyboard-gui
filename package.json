@@ -26,7 +26,8 @@
     "grunt-build-node-webkit-app": "^0.2.1",
     "load-grunt-tasks": "^0.4.0",
     "time-grunt": "^0.3.1",
-    "grunt-contrib-watch": "^0.6.1"
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-contrib-concat": "^0.4.0"
   },
   "dependencies": {
     "iced-coffee-script": "^1.7.1-b",

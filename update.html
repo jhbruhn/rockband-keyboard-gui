@@ -1,12 +1,18 @@
 <!doctype html>
 <html>
 <head>
-<script src="build/js/updater.js">
-</script>
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="build/js/updater.js"></script>
 </head>
 <body>
-<progress id="progress" value="0" max="100"></progress>
-<div id="message">Downloading Update.</div>
-
+  <div class="container" style="padding-top: 10px;">
+    <div class="progress progress-striped active">
+      <div class="progress-bar" id="progress"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+      </div>
+    </div>
+    <div id="message">Downloading Update...</div>
+  </div>
 </body>
 </html>

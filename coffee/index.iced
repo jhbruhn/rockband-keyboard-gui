@@ -25,13 +25,11 @@ updater.on "download-failed", (err) ->
   window.updaterWindow.emit("message", err)
   alert err
 updater.on "download-finished", ->
-  window.updaterWindow.emit("message", "Download Finished, installing...")
+  window.updaterWindow.emit("download-finished")
 updater.on "download-progress", (state) ->
   window.updaterWindow.emit("progress", state)
 updater.on "update-installed", ->
-  alert "A new Update was installed!
-    Please finish your work and restart this application!
-     (Also we shouldn't be that intrusive.)"
+  window.updaterWindow.emit("update-installed")
 
 await updater.isUpdateAvailable defer err, av
 

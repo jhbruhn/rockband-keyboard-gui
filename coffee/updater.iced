@@ -9,3 +9,7 @@ win.on("message", (message) ->
   document.getElementById("message").innerHtml = message
   alert(message)
 )
+
+win.on("download-finished", ->
+  alert "Finished!"
+)

@@ -1,6 +1,8 @@
 rockband-keyboard-gui
 =====================
 
+[![Build Status](https://travis-ci.org/jhbruhn/rockband-keyboard-gui.svg?branch=master)](https://travis-ci.org/jhbruhn/rockband-keyboard-gui)
+
 A gui for using the Rockband-Keyboard as a wireless MIDI-Device.
 
 Windows Build:

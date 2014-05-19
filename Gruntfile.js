@@ -48,7 +48,23 @@ module.exports = function(grunt) {
       osxName: "Rockband Keyboard",
       icns: "./res/icon.icns",
       version: "<%= pkg.version %>"
-  }
+    }
+  });
+
+  grunt.registerTask('dist-package-json', function () {
+    var projectFile = "./package.json";
+
+
+    if (!grunt.file.exists(projectFile)) {
+      grunt.log.error("file " + projectFile + " not found");
+      return true;
+    }
+    var project = grunt.file.readJSON(projectFile);
+
+    project["window"]["toolbar"] = false;
+
+    grunt.file.write(projectFile, JSON.stringify(project, null, 2));
+
   });
 
   grunt.registerTask('publish-package-json', function() {
@@ -68,7 +84,7 @@ module.exports = function(grunt) {
   grunt.registerTask('build', ['build-js', 'build-css']);
 
   grunt.registerTask('dist', ['build', 'bundle-node-webkit-app-mac', 'bundle-node-webkit-app-win',
-  'bundle-node-webkit-app-linux32', 'bundle-node-webkit-app-linux64', 'publish-package-json']);
+  'bundle-node-webkit-app-linux32', 'bundle-node-webkit-app-linux64', 'dist-package-json', 'publish-package-json']);
 
   grunt.registerTask('dev', ['build', 'watch:app']);
 }

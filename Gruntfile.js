@@ -83,8 +83,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', ['build-js', 'build-css']);
 
-  grunt.registerTask('dist', ['build', 'bundle-node-webkit-app-mac', 'bundle-node-webkit-app-win',
-  'bundle-node-webkit-app-linux32', 'bundle-node-webkit-app-linux64', 'dist-package-json', 'publish-package-json']);
+  grunt.registerTask('dist', ['build', 'dist-package-json', 'bundle-node-webkit-app-mac', 'bundle-node-webkit-app-win',
+  'bundle-node-webkit-app-linux32', 'bundle-node-webkit-app-linux64', 'publish-package-json']);
 
   grunt.registerTask('dev', ['build', 'watch:app']);
 }

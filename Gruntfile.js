@@ -43,8 +43,9 @@ module.exports = function(grunt) {
       targetDir: "dist",
       nwVersion: "0.9.2",
       distFiles: ["build/**/*.*", "res/**/*",  './node_modules/**', '!./node_modules/grunt*/**',
-                 '!./node_modules/nodewebkit*/**', '!./node_modules/archiver*/**', "package.json", 'index.html', 'update.html'],
-      name: "rockband-keyboard-gui",
+                 '!./node_modules/nodewebkit*/**', '!./node_modules/archiver*/**', "package.json",
+                 'index.html', 'update.html', '!./node_modules/load-grunt-tasks*/**', '!./node_modules/time-grunt*/**'],
+      name: "RockbandKeyboard",
       osxName: "Rockband Keyboard",
       icns: "./res/icon.icns",
       version: "<%= pkg.version %>"

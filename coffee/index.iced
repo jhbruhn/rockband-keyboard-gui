@@ -9,10 +9,10 @@ updaterOptions = {
   localVersion: localVersion
   osxAppName: "Rockband Keyboard"
   updateServer: updateServer
-  remoteFilenameOSX: "rockband-keyboard-gui-osx-ia32.zip"
-  remoteFilenameWin: "rockband-keyboard-gui-win-ia32.zip"
-  remoteFilenameLinux32: "rockband-keyboard-gui-linux-ia32.zip"
-  remoteFilenameLinux64: "rockband-keyboard-gui-linux-x64.zip"
+  remoteFilenameOSX: "RockbandKeyboard-osx-ia32.zip"
+  remoteFilenameWin: "RockbandKeyboard-win-ia32.zip"
+  remoteFilenameLinux32: "RockbandKeyboard-linux-ia32.zip"
+  remoteFilenameLinux64: "RockbandKeyboard-linux-x64.zip"
 }
 
 window.updater = updater = new Updater(updaterOptions)

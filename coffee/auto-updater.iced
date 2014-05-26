@@ -64,7 +64,7 @@ class Updater extends EventEmitter
       @emit "download-failed", err
       return
 
-    wrench.chmodSyncRecursive appPath, '0755'
+    wrench.chmodSyncRecursive "#{appPath}/#{@options.osxAppName}.app/", '0755'
 
     await @_removeOldReleaseMac appPath, @options.osxAppName, defer err
     if err?
